@@ -1,0 +1,37 @@
+
+def table_verite(variables, fonction):
+    """
+    Affiche la table de vérité, la première forme canonique et la seconde forme canonique d'une fonction logique.
+    
+    Paramètres:
+    variables (list) : Liste des variables de la fonction logique.
+    fonction (function) : Fonction logique à évaluer.
+    """
+    # Calculer toutes les combinaisons possibles des valeurs des variables
+    combinaisons = [[int(bit) for bit in format(i, '0{}b'.format(len(variables)))] for i in range(2 ** len(variables))]
+    
+    # Évaluer la fonction logique pour chaque combinaison de valeurs
+    resultats = [fonction(*combo) for combo in combinaisons]
+    
+    # Afficher la table de vérité
+    print("Table de vérité :")
+    print(" | ".join(variables) + " | Résultat")
+    print("-" * (len(" | ".join(variables)) + len(" | Résultat") + 3))
+    for i, combo in enumerate(combinaisons):
+        print(" | ".join(map(str, combo)) + " | " + str(resultats[i]))
+    
+    # Trouver la première forme canonique
+    premiere_forme = " + ".join(["(" + " * ".join(["{}".format(variables[j]) if bit else "~{}".format(variables[j]) for j, bit in enumerate(combo)]) + ")" for combo, res in zip(combinaisons, resultats) if res])
+    
+    # Trouver la seconde forme canonique
+    seconde_forme = " + ".join(["(" + " * ".join(["~{}".format(variables[j]) if bit else "{}".format(variables[j]) for j, bit in enumerate(combo)]) + ")" for combo, res in zip(combinaisons, resultats) if not res])
+    
+    print("\nPremière forme canonique :", premiere_forme)
+    print("Seconde forme canonique :", seconde_forme)
+
+# Exemple d'utilisation
+variables = ["A", "B", "C"]
+def fonction_logique(A, B, C):
+    return (A and B) or (B and C) or (~B and C)
+
+table_verite(variables, fonction_logique)
